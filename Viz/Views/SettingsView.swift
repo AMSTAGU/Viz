@@ -83,6 +83,7 @@ struct GeneralSettingsView: View {
     @Binding var mute: Bool
     @Binding var viewWidth: Double
     @Binding var viewHeight: Double
+    @AppStorage("showMenuBarIcon") var showMenuBarIcon: Bool = true
     @EnvironmentObject var appState: AppState
 
     var body: some View {
@@ -133,6 +134,16 @@ struct GeneralSettingsView: View {
                         }
                     ))
                     .toggleStyle(SpacedToggle())
+
+                    Toggle("Show menu bar icon", isOn: $showMenuBarIcon)
+                        .toggleStyle(SpacedToggle())
+                        .help("When disabled, the menu bar icon is hidden. Keyboard shortcuts keep working. Relaunch Viz from Finder or Spotlight to show the icon again.")
+
+                    if !showMenuBarIcon {
+                        Text("Icon hidden — relaunch Viz from Finder or Spotlight to bring it back.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
 
                     HStack {
                         Text("Capture Window Dimensions")

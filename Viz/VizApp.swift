@@ -14,9 +14,10 @@ struct VizApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @ObservedObject var appState = AppState.shared
     @StateObject private var updater = Updater(owner: "alienator88", repo: "Viz")
+    @AppStorage("showMenuBarIcon") private var showMenuBarIcon: Bool = true
 
     var body: some Scene {
-        MenuBarExtra("Viz", systemImage: updater.updateAvailable ? "arrow.down.circle" : "eye", content: {
+        MenuBarExtra("Viz", systemImage: updater.updateAvailable ? "arrow.down.circle" : "eye", isInserted: $showMenuBarIcon, content: {
             ContentView()
                 .environment(\.colorScheme, .dark)
                 .preferredColorScheme(.dark)
@@ -70,6 +71,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         ensureApplicationSupportFolderExists()
 #endif
 
+    }
+
+    // Relaunching the app (e.g. from Finder or Spotlight) brings back a hidden menu bar icon
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        if !UserDefaults.standard.bool(forKey: "showMenuBarIcon") {
+            UserDefaults.standard.set(true, forKey: "showMenuBarIcon")
+        }
+        return true
     }
 
 }
